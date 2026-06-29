@@ -2,8 +2,10 @@ import 'package:PiliPlus/models/common/enum_with_label.dart';
 
 enum SuperResolutionType with EnumWithLabel {
   disable('禁用'),
-  efficiency('效率'),
-  quality('画质'),
+  efficiency('Anime4K 效率'),
+  quality('Anime4K 画质'),
+  fsrcnnx('FSRCNNX'),
+  fsrcnnxPro('FSRCNNX Pro'),
   ;
 
   @override

@@ -50,4 +50,21 @@ abstract final class Assets {
     'Anime4K_Restore_CNN_S.glsl',
     'Anime4K_Upscale_CNN_x2_M.glsl',
   ];
+
+  // FSRCNNX pipeline: trained on live-action content, local residual learning
+  // with recursive blocks. Better for non-anime material than Anime4K.
+  // Requires OUTPUT/MAIN > 1.4x scale factor.
+  static const mpvFSRCNNXShaders = [
+    'FSRCNNX_x2_8-0-4-1.glsl',
+  ];
+
+  // FSRCNNX Pro pipeline: NNEDI3 → FSRCNNX x2 → RAVU-zoom → mpv scaler.
+  // Full multi-stage pipeline for maximum quality on low-res sources (≤720p)
+  // targeting 4K output. NNEDI3 activates at ≥2x scale, FSRCNNX at ≥1.4x,
+  // RAVU-zoom handles arbitrary-ratio edge repair + anti-aliasing.
+  static const mpvFSRCNNXProShaders = [
+    'nnedi3-nns32-win8x4.hook',
+    'FSRCNNX_x2_8-0-4-1.glsl',
+    'ravu-zoom-ar-r3.hook',
+  ];
 }

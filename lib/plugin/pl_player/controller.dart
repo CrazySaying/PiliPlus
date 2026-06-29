@@ -675,7 +675,10 @@ class PlPlayerController with BlockConfigMixin {
 
     return shadersDirPath = await AssetUtils.getOrCopy(
       'assets/shaders',
-      Assets.mpvAnime4KShaders.followedBy(Assets.mpvAnime4KShadersLite),
+      Assets.mpvAnime4KShaders
+          .followedBy(Assets.mpvAnime4KShadersLite)
+          .followedBy(Assets.mpvFSRCNNXShaders)
+          .followedBy(Assets.mpvFSRCNNXProShaders),
       path.join(appSupportDirPath, 'anime_shaders'),
     );
   }
@@ -714,6 +717,26 @@ class PlPlayerController with BlockConfigMixin {
           PathUtils.buildShadersAbsolutePath(
             await copyShadersToExternalDirectory,
             Assets.mpvAnime4KShaders,
+          ),
+        ]);
+      case SuperResolutionType.fsrcnnx:
+        return pp.command([
+          'change-list',
+          'glsl-shaders',
+          'set',
+          PathUtils.buildShadersAbsolutePath(
+            await copyShadersToExternalDirectory,
+            Assets.mpvFSRCNNXShaders,
+          ),
+        ]);
+      case SuperResolutionType.fsrcnnxPro:
+        return pp.command([
+          'change-list',
+          'glsl-shaders',
+          'set',
+          PathUtils.buildShadersAbsolutePath(
+            await copyShadersToExternalDirectory,
+            Assets.mpvFSRCNNXProShaders,
           ),
         ]);
     }
