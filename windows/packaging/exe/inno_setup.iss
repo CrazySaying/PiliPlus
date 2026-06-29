@@ -41,6 +41,8 @@ begin
               mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
     begin
       DelTree(ExpandConstant('{localappdata}\com.example\piliplus'), True, True, True);
+      // 旧版 path_provider (<2.1.0) 曾写入 Roaming，清理残留
+      DelTree(ExpandConstant('{userappdata}\com.example\piliplus'), True, True, True);
     end;
   end;
 end;
