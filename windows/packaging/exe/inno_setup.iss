@@ -31,6 +31,20 @@ begin
   Result := True;
 end;
 
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then
+  begin
+    if MsgBox('是否同时删除所有用户数据？' + #13#10 +
+              '包括: 设置、登录信息、观看进度、超分shader缓存' + #13#10#13#10 +
+              '选择"是"将彻底清理，选择"否"保留数据以便重新安装后恢复。',
+              mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
+    begin
+      DelTree(ExpandConstant('{localappdata}\com.example\piliplus'), True, True, True);
+    end;
+  end;
+end;
+
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
