@@ -35,13 +35,13 @@ abstract final class Assets {
   static const rightDisable = 'assets/images/paycoins/ic_right_disable.png';
   static const panelClose = 'assets/images/paycoins/ic_panel_close.png';
 
+  // Single-pass pipeline: Clamp → Restore → Upscale CNN x2 → mpv scaler → OUTPUT.
+  // No AutoDownscalePre (destructive downscale→upscale cycle) and no secondary
+  // upscale pass — one high-quality inference pass beats multiple iterations.
   static const List<String> mpvAnime4KShaders = [
     'Anime4K_Clamp_Highlights.glsl',
     'Anime4K_Restore_CNN_VL.glsl',
     'Anime4K_Upscale_CNN_x2_VL.glsl',
-    'Anime4K_AutoDownscalePre_x2.glsl',
-    'Anime4K_AutoDownscalePre_x4.glsl',
-    'Anime4K_Upscale_CNN_x2_M.glsl',
   ];
 
   static const mpvAnime4KShadersLite = [
@@ -49,8 +49,5 @@ abstract final class Assets {
     'Anime4K_Restore_CNN_M.glsl',
     'Anime4K_Restore_CNN_S.glsl',
     'Anime4K_Upscale_CNN_x2_M.glsl',
-    'Anime4K_AutoDownscalePre_x2.glsl',
-    'Anime4K_AutoDownscalePre_x4.glsl',
-    'Anime4K_Upscale_CNN_x2_S.glsl',
   ];
 }
