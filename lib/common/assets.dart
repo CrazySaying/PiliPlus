@@ -51,21 +51,21 @@ abstract final class Assets {
     'Anime4K_Upscale_CNN_x2_M.glsl',
   ];
 
-  // FSRCNNX pipeline: FSRCNNX_x2_16-0-4-1 → RAVU-zoom-AR(r3).
-  // FSRCNNX activates at >1.3x scale factor; RAVU-zoom handles arbitrary-ratio
-  // edge repair + anti-aliasing at target resolution.
+  // FSRCNNX pipeline: FSRCNNX_x2(16n) → RAVU-Lite-AR(r3).
+  // FSRCNNX activates at >1.3x; RAVU-lite is fixed-ratio 2x upscale with
+  // anti-ringing — faster and cleaner than zoom variant for post-CNN cleanup.
   static const mpvFSRCNNXShaders = [
     'FSRCNNX_x2_16-0-4-1.glsl',
-    'ravu-zoom-ar-r3.hook',
+    'ravu-lite-ar-r3.hook',
   ];
 
-  // FSRCNNX Pro pipeline: NNEDI3(nns32, >1.300x) → FSRCNNX x2(>1.300x) →
-  // RAVU-zoom-AR(r3) → mpv scaler. Full multi-stage pipeline for low-res
-  // sources (≤720p) targeting 4K. NNEDI3 pre-fills detail, FSRCNNX core
-  // reconstructs, RAVU-zoom cleans edges.
+  // FSRCNNX Pro pipeline: NNEDI3(nns32, >1.300x) → FSRCNNX_x2(16n, >1.300x) →
+  // RAVU-Lite-AR(r3) → mpv scaler. Full multi-stage for low-res sources
+  // targeting 4K. NNEDI3 pre-fills, FSRCNNX core reconstructs, RAVU-lite
+  // edge-cleans at 2x fixed ratio.
   static const mpvFSRCNNXProShaders = [
     'nnedi3-nns32-win8x4.hook',
     'FSRCNNX_x2_16-0-4-1.glsl',
-    'ravu-zoom-ar-r3.hook',
+    'ravu-lite-ar-r3.hook',
   ];
 }
