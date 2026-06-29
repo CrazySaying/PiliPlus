@@ -59,13 +59,12 @@ abstract final class Assets {
     'ravu-lite-ar-r3.hook',
   ];
 
-  // FSRCNNX Pro pipeline: FSRCNNX_x2(16n, >1.300x) → NNEDI3(nns32, >1.414x) →
-  // RAVU-Lite-AR(r3) → mpv scaler. FSRCNNX runs first on clean source;
-  // NNEDI3 only activates for extreme low-res when FSRCNNX alone can't reach
-  // target. This avoids NNEDI3's checkerboard artifacts at sub-optimal scales.
+  // FSRCNNX Pro pipeline: NNEDI3(nns32, >1.414x) → FSRCNNX_x2(16n, >1.300x) →
+  // RAVU-Lite-AR(r3) → mpv scaler. NNEDI3 edge-directed pre-fills at 2x;
+  // FSRCNNX CNN-reconstructs if more scale needed; RAVU-lite cleans edges.
   static const mpvFSRCNNXProShaders = [
-    'FSRCNNX_x2_16-0-4-1.glsl',
     'nnedi3-nns32-win8x4.hook',
+    'FSRCNNX_x2_16-0-4-1.glsl',
     'ravu-lite-ar-r3.hook',
   ];
 }
