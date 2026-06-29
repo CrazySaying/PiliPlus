@@ -51,17 +51,18 @@ abstract final class Assets {
     'Anime4K_Upscale_CNN_x2_M.glsl',
   ];
 
-  // FSRCNNX pipeline: FSRCNNX_x2(16n) → RAVU-Lite-AR(r3).
-  // FSRCNNX activates at >1.3x; RAVU-lite is fixed-ratio 2x upscale with
-  // anti-ringing — faster and cleaner than zoom variant for post-CNN cleanup.
+  // FSRCNNX pipeline: FSRCNNX pass1(16n, >1.300x) → FSRCNNX pass2(16n, always)
+  // → RAVU-Lite-AR(r3). Effective 4x upscale via dual-pass CNN; RAVU-lite
+  // edge-cleans the oversampled output. Aggressive quality for all sources.
   static const mpvFSRCNNXShaders = [
     'FSRCNNX_x2_16-0-4-1.glsl',
+    'FSRCNNX_x2_16-0-4-1_pass2.glsl',
     'ravu-lite-ar-r3.hook',
   ];
 
-  // FSRCNNX Pro pipeline: NNEDI3(nns32, >1.414x) → FSRCNNX_x2(16n, >1.300x) →
-  // RAVU-Lite-AR(r3) → mpv scaler. NNEDI3 edge-directed pre-fills at 2x;
-  // FSRCNNX CNN-reconstructs if more scale needed; RAVU-lite cleans edges.
+  // FSRCNNX 增强: NNEDI3(nns32, >1.414x) → FSRCNNX_x2(16n, >1.300x) →
+  // RAVU-Lite-AR(r3) → mpv scaler. For low-resolution sources (≤720p);
+  // NNEDI3 edge-directed pre-fills, FSRCNNX CNN-reconstructs.
   static const mpvFSRCNNXProShaders = [
     'nnedi3-nns32-win8x4.hook',
     'FSRCNNX_x2_16-0-4-1.glsl',

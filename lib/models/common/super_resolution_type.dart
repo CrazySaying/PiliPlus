@@ -4,8 +4,8 @@ enum SuperResolutionType with EnumWithLabel {
   disable('禁用'),
   efficiency('Anime4K 效率'),
   quality('Anime4K 画质'),
-  fsrcnnx('FSRCNNX'),
-  fsrcnnxPro('FSRCNNX Pro'),
+  fsrcnnx('FSRCNNX 4x'),
+  fsrcnnxPro('FSRCNNX 增强'),
   ;
 
   @override
