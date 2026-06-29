@@ -51,11 +51,11 @@ abstract final class Assets {
     'Anime4K_Upscale_CNN_x2_M.glsl',
   ];
 
-  // FSRCNNX pipeline: FSRCNNX_x2_8-0-4-1 → RAVU-zoom-AR(r3).
+  // FSRCNNX pipeline: FSRCNNX_x2_16-0-4-1 → RAVU-zoom-AR(r3).
   // FSRCNNX activates at >1.3x scale factor; RAVU-zoom handles arbitrary-ratio
   // edge repair + anti-aliasing at target resolution.
   static const mpvFSRCNNXShaders = [
-    'FSRCNNX_x2_8-0-4-1.glsl',
+    'FSRCNNX_x2_16-0-4-1.glsl',
     'ravu-zoom-ar-r3.hook',
   ];
 
@@ -65,7 +65,7 @@ abstract final class Assets {
   // reconstructs, RAVU-zoom cleans edges.
   static const mpvFSRCNNXProShaders = [
     'nnedi3-nns32-win8x4.hook',
-    'FSRCNNX_x2_8-0-4-1.glsl',
+    'FSRCNNX_x2_16-0-4-1.glsl',
     'ravu-zoom-ar-r3.hook',
   ];
 }
