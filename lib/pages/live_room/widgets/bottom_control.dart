@@ -1,4 +1,5 @@
 import 'package:PiliPlus/common/widgets/custom_icon.dart';
+import 'package:PiliPlus/models/common/super_resolution_type.dart';
 import 'package:PiliPlus/pages/live_room/controller.dart';
 import 'package:PiliPlus/pages/video/widgets/header_mixin.dart';
 import 'package:PiliPlus/plugin/pl_player/controller.dart';
@@ -188,6 +189,39 @@ class _BottomControlState extends State<BottomControl> with HeaderMixin {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   liveRoomCtr.currentQnDesc.value,
+                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                ),
+              ),
+            ),
+          ),
+          Obx(
+            () => PopupMenuButton<SuperResolutionType>(
+              tooltip: '超分辨率',
+              initialValue: plPlayerController.superResolutionType.value,
+              color: Colors.black.withValues(alpha: 0.8),
+              itemBuilder: (context) {
+                return SuperResolutionType.values
+                    .map(
+                      (type) => PopupMenuItem<SuperResolutionType>(
+                        height: 35,
+                        padding: const EdgeInsets.only(left: 30),
+                        value: type,
+                        onTap: () => plPlayerController.setShader(type),
+                        child: Text(
+                          type.label,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  plPlayerController.superResolutionType.value.label,
                   style: const TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ),
