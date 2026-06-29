@@ -680,9 +680,9 @@ class PlPlayerController with BlockConfigMixin {
     );
   }
 
-  late final isAnim = _pgcType == 1 || _pgcType == 4;
+  late final isAnim = true;
   late final Rx<SuperResolutionType> superResolutionType =
-      (isAnim ? Pref.superResolutionType : SuperResolutionType.disable).obs;
+      Pref.superResolutionType.obs;
   Future<void> setShader([SuperResolutionType? type, NativePlayer? pp]) async {
     if (type == null) {
       type = superResolutionType.value;
@@ -719,6 +719,48 @@ class PlPlayerController with BlockConfigMixin {
     }
   }
 
+  /// Compute the output texture size that fits within [boundsW]×[boundsH]
+  /// while **strictly preserving the video's native aspect ratio**, ensuring
+  /// the shader pipeline never performs non-uniform scaling.
+  ({int width, int height}) _fitOutputSize(double boundsW, double boundsH) {
+    final videoW = this.width;
+    final videoH = this.height;
+    if (videoW == null || videoH == null || videoW == 0 || videoH == 0) {
+      return (width: boundsW.ceil(), height: boundsH.ceil());
+    }
+    final videoAR = videoW / videoH;
+    final boundsAR = boundsW / boundsH;
+    final double outW, outH;
+    if (boundsAR > videoAR) {
+      // Bounds wider than video → fit by height
+      outH = boundsH;
+      outW = boundsH * videoAR;
+    } else {
+      // Bounds taller than video → fit by width
+      outW = boundsW;
+      outH = boundsW / videoAR;
+    }
+    return (width: outW.ceil(), height: outH.ceil());
+  }
+
+  /// Update the video output texture resolution to match the display area,
+  /// while preserving the video's native aspect ratio. This makes mpv's OUTPUT
+  /// proportional to NATIVE, enabling Anime4K upscale shaders (WHEN
+  /// OUTPUT/NATIVE > 1.2) without any non-uniform scaling.
+  Size? _lastVideoOutputSize;
+
+  Future<void> updateVideoOutputSize(double boundsW, double boundsH) async {
+    if (Platform.isAndroid) return; // setSize not supported on Android
+    final (:width, :height) = _fitOutputSize(boundsW, boundsH);
+    if (_lastVideoOutputSize != null &&
+        _lastVideoOutputSize!.width == width &&
+        _lastVideoOutputSize!.height == height) {
+      return;
+    }
+    _lastVideoOutputSize = ui.Size(width.toDouble(), height.toDouble());
+    await _videoController?.setSize(width: width, height: height);
+  }
+
   static final loudnormRegExp = RegExp('loudnorm=([^,]+)');
 
   Future<Player> _initPlayer() async {
@@ -745,12 +787,30 @@ class PlPlayerController with BlockConfigMixin {
 
     assert(_videoController == null);
 
+    // Use physical screen bounds to compute the initial video output size,
+    // locked to the video's native aspect ratio. This ensures mpv's OUTPUT is
+    // proportional to NATIVE — Anime4K upscale shaders activate
+    // (OUTPUT/NATIVE > 1.2) without any non-uniform scaling.
+    int outputWidth = 0;
+    int outputHeight = 0;
+    try {
+      final view = ui.PlatformDispatcher.instance.views.first;
+      final size = _fitOutputSize(
+        view.physicalSize.width,
+        view.physicalSize.height,
+      );
+      outputWidth = size.width;
+      outputHeight = size.height;
+    } catch (_) {}
+
     _videoController = await VideoController.create(
       player,
       configuration: VideoControllerConfiguration(
         enableHardwareAcceleration: hwdec != null,
         androidAttachSurfaceAfterVideoParameters: false,
         hwdec: hwdec,
+        width: outputWidth > 0 ? outputWidth : null,
+        height: outputHeight > 0 ? outputHeight : null,
       ),
     );
 
@@ -1591,6 +1651,7 @@ class PlPlayerController with BlockConfigMixin {
     _videoPlayerController = null;
     _videoController = null;
     _instance = null;
+    _lastVideoOutputSize = null;
     videoPlayerServiceHandler?.clear();
   }
 

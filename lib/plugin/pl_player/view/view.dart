@@ -1340,6 +1340,14 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
   Widget build(BuildContext context) {
     maxWidth = widget.maxWidth;
     maxHeight = widget.maxHeight;
+    // Update mpv video output texture size to match the physical display area.
+    // This makes mpv OUTPUT > NATIVE, triggering Anime4K upscale shader WHEN
+    // conditions (OUTPUT/NATIVE > 1.2) for high-resolution screens.
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    plPlayerController.updateVideoOutputSize(
+      maxWidth * dpr,
+      maxHeight * dpr,
+    );
     final isFullScreen = this.isFullScreen;
     final primary = isFullScreen && colorScheme.isLight
         ? colorScheme.inversePrimary
